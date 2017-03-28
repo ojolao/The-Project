@@ -40,8 +40,9 @@ if (process.env.NODE_ENV === 'production') {
     saveUninitialized: true
   }));
 } else {
+  var config = require('./config/config');
   app.use(require('express-session')({
-    secret: process.env.SESSION_SECRET,
+    secret: config.SESSION_SECRET,
     resave: true,
     saveUninitialized: true
   }));
