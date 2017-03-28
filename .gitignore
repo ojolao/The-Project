@@ -34,3 +34,5 @@ node_modules/
 bower_components/
 
 .env
+
+server/api/config
