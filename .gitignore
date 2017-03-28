@@ -36,3 +36,4 @@ bower_components/
 .env
 
 server/api/config
+server/config
