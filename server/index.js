@@ -152,10 +152,10 @@ app.get('/login', authHelper, (req, res) => {
   }
 });
 
-app.post('/recent', function(req,res) {
-  //call query function for latest trip,
-  //res.send(object back to the client)
-});
+// app.post('/recent', function(req,res) {
+//   //call query function for latest trip,
+//   //res.send(object back to the client)
+// });
 
 app.get('/logout', authHelper, function(req, res) {
   req.logout();
@@ -241,11 +241,20 @@ app.post('/summary', (req, res) => {
 
 // this will duplicate with Duy's /recent
 app.post('/recent', (req, res) => {
-  db.getReceiptsAndTrips({adminName: 'Gary Wong', tripName: 'lol123'})
+  console.log('req.body==============', req.body);
+  db.getReceiptsAndTrips({adminName: req.body.username, tripName: req.body.tripName})
   .then( (results) => {
     res.send(results);
   });
 });
+
+// app.get('/recent-trips', (req, res) => {
+//   console.log('req.body==============', req.body);
+//   db.getReceiptsAndTrips({adminName: req.body.username, tripName: req.body.tripName})
+//   .then( (results) => {
+//     res.send(results);
+//   });
+// });
 
 //gVision.spliceReceipt produces an object of item : price pairs
 app.post('/vision', function(req, res) {
