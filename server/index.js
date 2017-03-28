@@ -33,11 +33,19 @@ app.use(fileUpload());
 // logging, parsing, and session handling.
 app.use(require('morgan')('combined'));
 app.use(require('cookie-parser')());
-app.use(require('express-session')({
-  secret: process.env.SESSION_SECRET,
-  resave: true,
-  saveUninitialized: true
-}));
+if (process.env.NODE_ENV === 'production') {
+  app.use(require('express-session')({
+    secret: process.env.SESSION_SECRET,
+    resave: true,
+    saveUninitialized: true
+  }));
+} else {
+  app.use(require('express-session')({
+    secret: process.env.SESSION_SECRET,
+    resave: true,
+    saveUninitialized: true
+  }));
+}
 
 // Initialize Passport and restore authentication state, if any, from the
 // session.
