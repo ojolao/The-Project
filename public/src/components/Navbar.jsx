@@ -9,6 +9,7 @@ const Navbar = ({isAuthenticated, handleClickLogout, sideMenuState, menuOnClick}
       <nav className='menu'>
         <Link to="/" className='link'>Home</Link>
         <Link to="/recent-trips" className='link'>Recent Trips</Link>
+        <Link to="/friends" className='link'>Friends</Link>
         {isAuthenticated ? null : <Link to="/login" className='link'>Login</Link>}
         {!isAuthenticated ? null : <Link to="/logout" onClick={handleClickLogout} className='link'>Logout</Link>}
       </nav>
