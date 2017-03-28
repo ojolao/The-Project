@@ -40,7 +40,7 @@ if (process.env.NODE_ENV === 'production') {
     saveUninitialized: true
   }));
 } else {
-  var config = require('./config/config');
+  const config = require('./config/config');
   app.use(require('express-session')({
     secret: config.SESSION_SECRET,
     resave: true,
@@ -61,27 +61,51 @@ passport.deserializeUser(function(obj, cb) {
   cb(null, obj);
 });
 
+if (process.env.NODE_ENV === 'production') {
+  passport.use(new FacebookStrategy({
+    clientID: process.env.FB_CLIENT_ID,
+    clientSecret: process.env.FB_CLIENT_SECRET,
+    callbackURL: '/auth/facebook/callback',
+    profileFields: ['id', 'email', 'displayName', 'gender', 'link', 'locale', 'name', 'timezone', 'updated_time', 'verified'],
+  },
 
-passport.use(new FacebookStrategy({
-  clientID: process.env.FB_CLIENT_ID,
-  clientSecret: process.env.FB_CLIENT_SECRET,
-  callbackURL: '/auth/facebook/callback',
-  profileFields: ['id', 'email', 'displayName', 'gender', 'link', 'locale', 'name', 'timezone', 'updated_time', 'verified'],
-},
+    function(accessToken, refreshToken, profile, cb) {
+      process.nextTick(function () {
+        let userInfo = {
+          name: profile._json.name,
+          fb_id: profile._json.id,
+          token: accessToken,
+          email: profile._json.email
+        };
+        db.createNewUser(userInfo);
+        return cb(null, userInfo);
+      });
+    }
+  ));
 
-  function(accessToken, refreshToken, profile, cb) {
-    process.nextTick(function () {
-      let userInfo = {
-        name: profile._json.name,
-        fb_id: profile._json.id,
-        token: accessToken,
-        email: profile._json.email
-      };
-      db.createNewUser(userInfo);
-      return cb(null, userInfo);
-    });
-  }
-));
+} else {
+  const facebook = require('./config/facebook');
+  passport.use(new FacebookStrategy({
+    clientID: facebook.facebookAuth.clientID,
+    clientSecret: facebook.facebookAuth.clientSecret,
+    callbackURL: facebook.facebookAuth.callbackURL,
+    profileFields: ['id', 'email', 'displayName', 'gender', 'link', 'locale', 'name', 'timezone', 'updated_time', 'verified'],
+  },
+
+    function(accessToken, refreshToken, profile, cb) {
+      process.nextTick(function () {
+        let userInfo = {
+          name: profile._json.name,
+          fb_id: profile._json.id,
+          token: accessToken,
+          email: profile._json.email
+        };
+        db.createNewUser(userInfo);
+        return cb(null, userInfo);
+      });
+    }
+  ));
+}
 
 // route middleware to make sure a user is logged in
 checkAuthentication = (req, res, next) => {
