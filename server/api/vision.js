@@ -6,14 +6,22 @@ const index = require('../index.js');
 
 //Google-cloud mod setup
 const vision = gcloud.vision;
-const visionClient = vision({
-  projectId: 'gewd-161701',
-  credentials: {
-    client_email: process.env.client_email,
-    private_key: process.env.private_key.replace(/\\n/g, '\n')
-  }
-});
-
+var visionClient;
+if (process.env.NODE_ENV === 'production') {
+  visionClient = vision({
+    projectId: 'gewd-162918',
+    credentials: {
+      client_email: process.env.client_email,
+      private_key: process.env.private_key.replace(/\\n/g, '\n')
+    }
+  });
+} else {
+  visionClient = vision({
+    projectId: 'gewd-162918',
+    keyFilename: __dirname + '/config/gewd.json'
+  });
+}
+console.log('VISION CLIENT==========', visionClient);
 exports.promisifiedDetectText = function(image) {
   return new Promise(function(resolve, reject) {
     visionClient.detectText(image, function(err, text) {

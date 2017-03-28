@@ -33,11 +33,20 @@ app.use(fileUpload());
 // logging, parsing, and session handling.
 app.use(require('morgan')('combined'));
 app.use(require('cookie-parser')());
-app.use(require('express-session')({
-  secret: process.env.SESSION_SECRET,
-  resave: true,
-  saveUninitialized: true
-}));
+if (process.env.NODE_ENV === 'production') {
+  app.use(require('express-session')({
+    secret: process.env.SESSION_SECRET,
+    resave: true,
+    saveUninitialized: true
+  }));
+} else {
+  const config = require('./config/config');
+  app.use(require('express-session')({
+    secret: config.SESSION_SECRET,
+    resave: true,
+    saveUninitialized: true
+  }));
+}
 
 // Initialize Passport and restore authentication state, if any, from the
 // session.
@@ -52,27 +61,51 @@ passport.deserializeUser(function(obj, cb) {
   cb(null, obj);
 });
 
+if (process.env.NODE_ENV === 'production') {
+  passport.use(new FacebookStrategy({
+    clientID: process.env.FB_CLIENT_ID,
+    clientSecret: process.env.FB_CLIENT_SECRET,
+    callbackURL: '/auth/facebook/callback',
+    profileFields: ['id', 'email', 'displayName', 'gender', 'link', 'locale', 'name', 'timezone', 'updated_time', 'verified'],
+  },
 
-passport.use(new FacebookStrategy({
-  clientID: process.env.FB_CLIENT_ID,
-  clientSecret: process.env.FB_CLIENT_SECRET,
-  callbackURL: '/auth/facebook/callback',
-  profileFields: ['id', 'email', 'displayName', 'gender', 'link', 'locale', 'name', 'timezone', 'updated_time', 'verified'],
-},
+    function(accessToken, refreshToken, profile, cb) {
+      process.nextTick(function () {
+        let userInfo = {
+          name: profile._json.name,
+          fb_id: profile._json.id,
+          token: accessToken,
+          email: profile._json.email
+        };
+        db.createNewUser(userInfo);
+        return cb(null, userInfo);
+      });
+    }
+  ));
 
-  function(accessToken, refreshToken, profile, cb) {
-    process.nextTick(function () {
-      let userInfo = {
-        name: profile._json.name,
-        fb_id: profile._json.id,
-        token: accessToken,
-        email: profile._json.email
-      };
-      db.createNewUser(userInfo);
-      return cb(null, userInfo);
-    });
-  }
-));
+} else {
+  const facebook = require('./config/facebook');
+  passport.use(new FacebookStrategy({
+    clientID: facebook.facebookAuth.clientID,
+    clientSecret: facebook.facebookAuth.clientSecret,
+    callbackURL: facebook.facebookAuth.callbackURL,
+    profileFields: ['id', 'email', 'displayName', 'gender', 'link', 'locale', 'name', 'timezone', 'updated_time', 'verified'],
+  },
+
+    function(accessToken, refreshToken, profile, cb) {
+      process.nextTick(function () {
+        let userInfo = {
+          name: profile._json.name,
+          fb_id: profile._json.id,
+          token: accessToken,
+          email: profile._json.email
+        };
+        db.createNewUser(userInfo);
+        return cb(null, userInfo);
+      });
+    }
+  ));
+}
 
 // route middleware to make sure a user is logged in
 checkAuthentication = (req, res, next) => {
@@ -119,10 +152,10 @@ app.get('/login', authHelper, (req, res) => {
   }
 });
 
-app.post('/recent', function(req,res) {
-  //call query function for latest trip,
-  //res.send(object back to the client)
-});
+// app.post('/recent', function(req,res) {
+//   //call query function for latest trip,
+//   //res.send(object back to the client)
+// });
 
 app.get('/logout', authHelper, function(req, res) {
   req.logout();
@@ -208,11 +241,20 @@ app.post('/summary', (req, res) => {
 
 // this will duplicate with Duy's /recent
 app.post('/recent', (req, res) => {
-  db.getReceiptsAndTrips({adminName: 'Gary Wong', tripName: 'lol123'})
+  console.log('req.body==============', req.body);
+  db.getReceiptsAndTrips({adminName: req.body.username, tripName: req.body.tripName})
   .then( (results) => {
     res.send(results);
   });
 });
+
+// app.get('/recent-trips', (req, res) => {
+//   console.log('req.body==============', req.body);
+//   db.getReceiptsAndTrips({adminName: req.body.username, tripName: req.body.tripName})
+//   .then( (results) => {
+//     res.send(results);
+//   });
+// });
 
 //gVision.spliceReceipt produces an object of item : price pairs
 app.post('/vision', function(req, res) {
