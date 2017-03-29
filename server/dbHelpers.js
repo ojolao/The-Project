@@ -59,8 +59,47 @@ const queryString = {
                               WHERE trips.adminID = \
                               (SELECT members.id from members \
                               WHERE members.name = ?)\
-                              AND trips.name = ?));'
+                              AND trips.name = ?));',
+  addFriend: 'INSERT INTO friendsList (member_id, friend_id)\
+                VALUES ((SELECT id FROM members WHERE email = ?),\
+                        (SELECT id FROM members WHERE email = ?));',
+  findFriend: 'SELECT * FROM friendsList\
+                where member_id=(SELECT id FROM members WHERE email = ?)\
+                       AND friend_id=(SELECT id FROM members WHERE email = ?);'
 }
+
+const addFriend = (params, cb) => {
+  db.query(queryString.findFriend, params, (err, result) => {
+    if (err) {
+      console.log('ERROR IN FIND FRIEND');
+      cb('There seems to be an error. Try again later.', null);
+    } else if (result.length < 1) {
+      db.query(queryString.addFriend, params, (err) => {
+        if (err) {
+          console.log('ERROR IN ADD FRIEND')
+          cb('Sorry we could not find your friend...', null)
+        } else {
+          console.log('success!! add friend');
+          cb(null, 'Successfully added friend!');
+        }
+      });
+    } else {
+      console.log('DUPLICATE FRIEND');
+      cb(null, 'You are already friends with this user!')
+    }
+  });
+
+
+  // return db.queryAsync(queryString.addFriend, params)
+  // .then((result) => {
+  //   console.log('Success adding friend!')
+  //   cb(null, result);
+  // })
+  // .catch((err) => {
+  //   console.error('Error adding friend...');
+  //   cb(err, null);
+  // });
+};
 
 const createNewUser = (userInfo) => {
   db.queryAsync(`SELECT * from members where fb_id = ?`, userInfo.fb_id)
@@ -272,5 +311,6 @@ module.exports = {
   storeReceiptItems,
   assignItemsToMembers,
   createMemberSummary,
-  getReceiptsAndTrips
+  getReceiptsAndTrips,
+  addFriend
 }
