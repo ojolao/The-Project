@@ -76,6 +76,18 @@ const queryString = {
                   AND friend_id=(SELECT id FROM members WHERE email = ?)'
 }
 
+const removeFriend = (params, cb) => {
+  db.query(queryString.removeFriend, params, (err, result) => {
+    if (err) {
+      console.log('Error removing friends...');
+      cb(err, null);
+    } else {
+      console.log('Success removing friends!');
+      cb(null, result);
+    }
+  });
+};
+
 const getAllFriends = (params, cb) => {
   db.query(queryString.getAllFriends, params, (err, result) => {
     if (err) {
