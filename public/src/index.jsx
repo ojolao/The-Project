@@ -26,7 +26,7 @@ class App extends React.Component {
       receiptUrl: '',
       tripName: '',
       username: '',
-      email: '',
+      fb_id: '',
       tripDesc: '',
       receiptName: '',
       items: [],
@@ -71,6 +71,7 @@ class App extends React.Component {
   }
 
   verifyAuthentication(userInfo) {
+    console.log('USER INFO', userInfo);
     this.setState({
       isAuthenticated: userInfo.isAuthenitcated,
       username: userInfo.name || '',
