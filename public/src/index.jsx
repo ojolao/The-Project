@@ -26,6 +26,7 @@ class App extends React.Component {
       receiptUrl: '',
       tripName: '',
       username: '',
+      email: '',
       tripDesc: '',
       receiptName: '',
       items: [],
