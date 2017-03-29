@@ -319,6 +319,23 @@ app.post('/addfriend', (req, res) => {
   });
 });
 
+app.post('removefriend', (req, res) => {
+  db.removeFriend([req.body.email, req.body.friendEmail], (errRemove, resultRemove) => {
+    if (errRemove) {
+      res.status(500).send(errRemove);
+    } else {
+
+      db.getAllFriends([localStorage.user.email], (errFetch, resultFetch) => {
+        if (errFetch) {
+          res.status(500).send(errFetch);
+        } else {
+          res.send([resultAdd, resultFetch]);
+        }
+      });
+    }
+  });
+});
+
 const port = process.env.PORT || 5000;
 app.listen(port, function() {
   console.log(`Listening on ${port}`);
