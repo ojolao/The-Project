@@ -243,7 +243,6 @@ app.post('/summary', (req, res) => {
 
 // this will duplicate with Duy's /recent
 app.post('/recent', (req, res) => {
-  console.log('req.body==============', req.body);
   db.getReceiptsAndTrips({adminName: req.body.username, tripName: req.body.tripName})
   .then( (results) => {
     res.send(results);
@@ -271,6 +270,17 @@ app.post('/vision', function(req, res) {
   })
   .error(function(e) {
     console.log('Error received in appPost, promisifiedDetectText:', e);
+  });
+});
+
+app.post('/addfriend', (req, res) => {
+  console.log('req body', req.body);
+  db.addFriend([req.body.email, req.body.friendEmail], (err, result) => {
+    if (err) {
+      res.status(500).send(err);
+    } else {
+      res.status(201).send(result);
+    }
   });
 });
 
