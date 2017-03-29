@@ -319,7 +319,7 @@ app.post('/addfriend', (req, res) => {
   });
 });
 
-app.post('removefriend', (req, res) => {
+app.post('/removefriend', (req, res) => {
   db.removeFriend([req.body.email, req.body.friendEmail], (errRemove, resultRemove) => {
     if (errRemove) {
       res.status(500).send(errRemove);
@@ -329,7 +329,7 @@ app.post('removefriend', (req, res) => {
         if (errFetch) {
           res.status(500).send(errFetch);
         } else {
-          res.send([resultAdd, resultFetch]);
+          res.send(resultFetch);
         }
       });
     }

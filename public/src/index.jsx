@@ -74,6 +74,27 @@ class App extends React.Component {
     this.getRecentTrip = this.getRecentTrip.bind(this);
     this.handleAddFriendChange = this.handleAddFriendChange.bind(this);
     this.handleAddFriend = this.handleAddFriend.bind(this);
+    this.handleRemoveFriend = this.handleRemoveFriend.bind(this);
+  }
+
+  handleRemoveFriend(email) {
+    var self = this;
+    $.ajax({
+      url: '/removefriend',
+      type: 'POST',
+      data: {
+        email: this.state.email,
+        friendEmail: email
+      },
+      success: function(result) {
+        // console.log(result);
+        self.setState({friendsList: result, addFriendStatus: ''});
+      },
+      error: function(err) {
+        console.log(err.responseText);
+        // self.setState({addFriendStatus: err.responseText});
+      }
+    });
   }
 
   handleAddFriend() {
@@ -86,11 +107,11 @@ class App extends React.Component {
         friendEmail: this.state.friendEmail
       },
       success: function(result) {
-        console.log(result);
+        // console.log(result);
         self.setState({addFriendStatus: result[0], friendsList: result[1]});
       },
       error: function(err) {
-        console.log(err.responseText);
+        // console.log(err.responseText);
         self.setState({addFriendStatus: err.responseText});
       }
     });
@@ -418,6 +439,7 @@ class App extends React.Component {
               addFriend={this.handleAddFriend}
               addFriendStatus={this.state.addFriendStatus}
               friendsList={this.state.friendsList}
+              removeFriend={this.handleRemoveFriend}
             />
             <Route path ="/login" render={() => (
               this.state.isAuthenticated ? <Redirect to="/" /> : <Login />
