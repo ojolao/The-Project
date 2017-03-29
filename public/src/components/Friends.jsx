@@ -9,7 +9,20 @@ class Friends extends React.Component {
 
   render() {
     return(
-      <h1>Friends</h1>
+      <div>
+        <h1>Friends</h1>
+        <input
+          placeholder='Add friend'
+          name='name' type='text'
+
+          id='input-name'
+          className='flex-column-name'
+        />
+        <a
+          className='btn-circle'>
+        </a>
+
+      </div>
     )
   }
 }
@@ -17,6 +30,13 @@ class Friends extends React.Component {
 export default Friends;
 
 /*
+onClick={this.props.addMember}
+value={itemName}
+onChange= {onInputChange}
+
+
+
+
 <div className='page-container'>
   <h1>Most Recent Trips</h1>
   <div className='trip-summary'>{this.props.data.recent.map((item,index) => {
