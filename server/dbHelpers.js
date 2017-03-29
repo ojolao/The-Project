@@ -345,5 +345,6 @@ module.exports = {
   createMemberSummary,
   getReceiptsAndTrips,
   addFriend,
-  getAllFriends
+  getAllFriends,
+  removeFriend
 }
