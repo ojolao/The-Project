@@ -70,7 +70,10 @@ const queryString = {
                   WHERE members.id IN\
                   (SELECT friendsList.friend_id FROM friendsList\
                   WHERE friendsList.member_id=\
-                  (SELECT id FROM members WHERE email = ?))'
+                  (SELECT id FROM members WHERE email = ?))',
+  removeFriend: 'DELETE FROM friendsList WHERE\
+                  member_id=(SELECT id FROM members WHERE email = ?)\
+                  AND friend_id=(SELECT id FROM members WHERE email = ?)'
 }
 
 const getAllFriends = (params, cb) => {
