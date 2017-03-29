@@ -27,6 +27,7 @@ class App extends React.Component {
       tripName: '',
       username: '',
       fb_id: '',
+      email: '',
       tripDesc: '',
       receiptName: '',
       items: [],
@@ -76,7 +77,8 @@ class App extends React.Component {
       isAuthenticated: userInfo.isAuthenitcated,
       username: userInfo.name || '',
       members: userInfo.name !== undefined ? this.state.members.concat([[userInfo.name]]) : this.state.members,
-      fb_id: userInfo.fb_id || ''
+      fb_id: userInfo.fb_id || '',
+      email: userInfo.email || ''
     });
   }
 
