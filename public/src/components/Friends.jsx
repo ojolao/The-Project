@@ -10,6 +10,7 @@ class Friends extends React.Component {
 
   render() {
     let friends = ['Kai', 'Tayo', 'Duy', 'Gary', 'Whitney', 'Eugene']
+    console.log('props', this.props);
     return(
       <div>
         <div>
@@ -17,7 +18,7 @@ class Friends extends React.Component {
           <input
             placeholder='Add friend by e-mail'
             name='name' type='text'
-
+            onChange={this.props.addFriendChange}
             id='input-name'
             className='flex-column-name'
           />

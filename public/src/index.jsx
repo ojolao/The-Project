@@ -70,11 +70,12 @@ class App extends React.Component {
     this.calculateTotal = this.calculateTotal.bind(this);
     this.updateDimensions = this.updateDimensions.bind(this);
     this.getRecentTrip = this.getRecentTrip.bind(this);
-    this.handleAddFriend = this.handleAddFriend.bind(this);
+    this.handleAddFriendChange = this.handleAddFriendChange.bind(this);
   }
 
-  handleAddFriend(e) {
+  handleAddFriendChange(e) {
     this.setState({friendEmail: e.target.value});
+    console.log(this.state.friendEmail);
   }
 
   verifyAuthentication(userInfo) {
@@ -390,6 +391,7 @@ class App extends React.Component {
               component={Friends}
               data={this.state}
               recent={this.getRecentTrip}
+              addFriendChange={this.handleAddFriendChange}
             />
             <Route path ="/login" render={() => (
               this.state.isAuthenticated ? <Redirect to="/" /> : <Login />
