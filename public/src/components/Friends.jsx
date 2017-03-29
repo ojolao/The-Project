@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import TripEntry from './TripEntry.jsx';
+import FriendEntry from './FriendEntry.jsx';
 
 class Friends extends React.Component {
   constructor(props) {
@@ -8,20 +9,31 @@ class Friends extends React.Component {
   }
 
   render() {
+    let friends = ['Kai', 'Tayo', 'Duy', 'Gary', 'Whitney', 'Eugene']
     return(
       <div>
-        <h1>Friends</h1>
-        <input
-          placeholder='Add friend'
-          name='name' type='text'
+        <div>
+          <h1>Friends</h1>
+          <input
+            placeholder='Add friend by e-mail'
+            name='name' type='text'
 
-          id='input-name'
-          className='flex-column-name'
-        />
-        <a
-          className='btn-circle'>
-        </a>
+            id='input-name'
+            className='flex-column-name'
+          />
+          <a
+            className='btn-circle'>
+          </a>
 
+        </div>
+        <div>
+          <br></br>
+          Sorry we could not find your friend...
+          <br></br>
+          <br></br>
+          <br></br>
+        </div>
+        {friends.map(friend => <FriendEntry friend={friend}/>)}
       </div>
     )
   }
