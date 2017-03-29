@@ -163,12 +163,21 @@ app.get('/logout', authHelper, function(req, res) {
 });
 
 app.get('/verify', authHelper, function(req, res) {
-  let userInfo = {
-    isAuthenitcated: localStorage.isAuthenitcated,
-    name: localStorage.user.name,
-    fb_id: localStorage.user.fb_id
-  };
-  res.send(userInfo);
+  console.log('LOCAL STORAGE', localStorage);
+  db.getAllFriends([localStorage.user.email], (err, result) => {
+    if (err) {
+      res.status(500).send(err);
+    } else {
+      let userInfo = {
+        isAuthenitcated: localStorage.isAuthenitcated,
+        name: localStorage.user.name,
+        fb_id: localStorage.user.fb_id,
+        email: localStorage.user.email,
+        friendsList: result
+      };
+      res.send(userInfo);
+    }
+  });
 });
 
 app.get('*', checkAuthentication, authHelper, (req, res) => {
@@ -241,20 +250,11 @@ app.post('/summary', (req, res) => {
 
 // this will duplicate with Duy's /recent
 app.post('/recent', (req, res) => {
-  console.log('req.body==============', req.body);
   db.getReceiptsAndTrips({adminName: req.body.username, tripName: req.body.tripName})
   .then( (results) => {
     res.send(results);
   });
 });
-
-// app.get('/recent-trips', (req, res) => {
-//   console.log('req.body==============', req.body);
-//   db.getReceiptsAndTrips({adminName: req.body.username, tripName: req.body.tripName})
-//   .then( (results) => {
-//     res.send(results);
-//   });
-// });
 
 //gVision.spliceReceipt produces an object of item : price pairs
 app.post('/vision', function(req, res) {
@@ -269,6 +269,38 @@ app.post('/vision', function(req, res) {
   })
   .error(function(e) {
     console.log('Error received in appPost, promisifiedDetectText:', e);
+  });
+});
+
+app.post('/addfriend', (req, res) => {
+  db.addFriend([req.body.email, req.body.friendEmail], (errAdd, resultAdd) => {
+    if (errAdd) {
+      res.status(500).send(errAdd);
+    } else {
+      db.getAllFriends([localStorage.user.email], (errFetch, resultFetch) => {
+        if (errFetch) {
+          res.status(500).send(errFetch);
+        } else {
+          res.send([resultAdd, resultFetch]);
+        }
+      });
+    }
+  });
+});
+
+app.post('/removefriend', (req, res) => {
+  db.removeFriend([req.body.email, req.body.friendEmail], (errRemove, resultRemove) => {
+    if (errRemove) {
+      res.status(500).send(errRemove);
+    } else {
+      db.getAllFriends([localStorage.user.email], (errFetch, resultFetch) => {
+        if (errFetch) {
+          res.status(500).send(errFetch);
+        } else {
+          res.send(resultFetch);
+        }
+      });
+    }
   });
 });
 

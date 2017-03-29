@@ -21,7 +21,7 @@ if (process.env.NODE_ENV === 'production') {
     keyFilename: __dirname + '/config/gewd.json'
   });
 }
-console.log('VISION CLIENT==========', visionClient);
+
 exports.promisifiedDetectText = function(image) {
   return new Promise(function(resolve, reject) {
     visionClient.detectText(image, function(err, text) {

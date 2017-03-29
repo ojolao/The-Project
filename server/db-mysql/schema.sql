@@ -13,6 +13,16 @@ CREATE TABLE IF NOT EXISTS members (
   PRIMARY KEY   (ID)
 );
 
+CREATE TABLE IF NOT EXISTS friendsList (
+  member_id int NOT NULL,
+  friend_id int NOT NULL
+);
+
+ALTER TABLE friendsList ADD FOREIGN KEY (member_id)
+REFERENCES members(id);
+ALTER TABLE friendsList ADD FOREIGN KEY (friend_id)
+REFERENCES members(id);
+
 CREATE TABLE IF NOT EXISTS trips (
   id            int NOT NULL AUTO_INCREMENT,
   name          varchar(50) NOT NULL,

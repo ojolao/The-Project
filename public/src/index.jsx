@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter as Router, Route, Link, Redirect} from 'react-router-dom';
 import TripSummary from './components/TripSummary.jsx';
+import Friends from './components/Friends.jsx';
 import CreateTrip from './components/CreateTrip.jsx';
 import Itemization from './components/Itemization.jsx';
 import UploadReceipt from './components/Upload.jsx';
@@ -25,6 +26,8 @@ class App extends React.Component {
       receiptUrl: '',
       tripName: '',
       username: '',
+      fb_id: '',
+      email: '',
       tripDesc: '',
       receiptName: '',
       items: [],
@@ -44,7 +47,10 @@ class App extends React.Component {
       amount: '',
       sideMenuState: false,
       windowHeight: '',
-      recent: [ {name: 'No trips yet. Now create one!'}]
+      recent: [ {name: 'No trips yet. Now create one!'}],
+      friendEmail: '',
+      addFriendStatus: '',
+      friendsList: []
     };
 
     this.verifyAuthentication = this.verifyAuthentication.bind(this);
@@ -66,14 +72,60 @@ class App extends React.Component {
     this.calculateTotal = this.calculateTotal.bind(this);
     this.updateDimensions = this.updateDimensions.bind(this);
     this.getRecentTrip = this.getRecentTrip.bind(this);
+    this.handleAddFriendChange = this.handleAddFriendChange.bind(this);
+    this.handleAddFriend = this.handleAddFriend.bind(this);
+    this.handleRemoveFriend = this.handleRemoveFriend.bind(this);
+  }
+
+  handleRemoveFriend(email) {
+    var self = this;
+    $.ajax({
+      url: '/removefriend',
+      type: 'POST',
+      data: {
+        email: this.state.email,
+        friendEmail: email
+      },
+      success: function(result) {
+        self.setState({friendsList: result, addFriendStatus: ''});
+      },
+      error: function(err) {
+        console.log(err.responseText);
+      }
+    });
+  }
+
+  handleAddFriend() {
+    var self = this;
+    $.ajax({
+      url: '/addfriend',
+      type: 'POST',
+      data: {
+        email: this.state.email,
+        friendEmail: this.state.friendEmail
+      },
+      success: function(result) {
+        self.setState({addFriendStatus: result[0], friendsList: result[1]});
+      },
+      error: function(err) {
+        self.setState({addFriendStatus: err.responseText});
+      }
+    });
+  }
+
+  handleAddFriendChange(e) {
+    this.setState({friendEmail: e.target.value});
   }
 
   verifyAuthentication(userInfo) {
+    console.log('USER INFO', userInfo);
     this.setState({
       isAuthenticated: userInfo.isAuthenitcated,
       username: userInfo.name || '',
       members: userInfo.name !== undefined ? this.state.members.concat([[userInfo.name]]) : this.state.members,
-      fb_id: userInfo.fb_id || ''
+      fb_id: userInfo.fb_id || '',
+      email: userInfo.email || '',
+      friendsList: userInfo.friendsList || []
     });
   }
 
@@ -189,7 +241,7 @@ class App extends React.Component {
       }
       if (item[0].name !== '<NOTE>') {
         sum += Number(item[0].amount);
-      } 
+      }
     });
     this.setState({
       sumBill: sum.toFixed(2)
@@ -301,7 +353,9 @@ class App extends React.Component {
               isAuthenticated={this.state.isAuthenticated}
               handleClickLogout={this.handleClickLogout}
               menuOnClick={this.menuOnClick}
-              sideMenuState={this.state.sideMenuState}/>
+              sideMenuState={this.state.sideMenuState}
+              recent={this.getRecentTrip}
+            />
           <div className='content-container'>
             <PrivateRouteHome path="/" isAuthenticated={this.state.isAuthenticated}
               data={this.state}
@@ -370,6 +424,18 @@ class App extends React.Component {
               component={TripSummary}
               data={this.state}
               recent={this.getRecentTrip}
+            />
+            <PrivateRoute
+              path ="/friends"
+              isAuthenticated={this.state.isAuthenticated}
+              component={Friends}
+              data={this.state}
+              recent={this.getRecentTrip}
+              addFriendChange={this.handleAddFriendChange}
+              addFriend={this.handleAddFriend}
+              addFriendStatus={this.state.addFriendStatus}
+              friendsList={this.state.friendsList}
+              removeFriend={this.handleRemoveFriend}
             />
             <Route path ="/login" render={() => (
               this.state.isAuthenticated ? <Redirect to="/" /> : <Login />
