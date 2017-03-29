@@ -65,8 +65,25 @@ const queryString = {
                         (SELECT id FROM members WHERE email = ?));',
   findFriend: 'SELECT * FROM friendsList\
                 where member_id=(SELECT id FROM members WHERE email = ?)\
-                       AND friend_id=(SELECT id FROM members WHERE email = ?);'
+                       AND friend_id=(SELECT id FROM members WHERE email = ?);',
+  getAllFriends: 'SELECT members.name, members.email FROM members\
+                  WHERE members.id IN\
+                  (SELECT friendsList.friend_id FROM friendsList\
+                  WHERE friendsList.member_id=\
+                  (SELECT id FROM members WHERE email = ?))'
 }
+
+const getAllFriends = (params, cb) => {
+  db.query(queryString.getAllFriends, params, (err, result) => {
+    if (err) {
+      console.log('Error getting all friends...');
+      cb(err, null);
+    } else {
+      console.log('Success getting all friends!');
+      cb(null, result);
+    }
+  });
+};
 
 const addFriend = (params, cb) => {
   db.query(queryString.findFriend, params, (err, result) => {
@@ -312,5 +329,6 @@ module.exports = {
   assignItemsToMembers,
   createMemberSummary,
   getReceiptsAndTrips,
-  addFriend
+  addFriend,
+  getAllFriends
 }

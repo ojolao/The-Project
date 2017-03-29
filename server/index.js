@@ -164,13 +164,29 @@ app.get('/logout', authHelper, function(req, res) {
 
 app.get('/verify', authHelper, function(req, res) {
   console.log('LOCAL STORAGE', localStorage);
-  let userInfo = {
-    isAuthenitcated: localStorage.isAuthenitcated,
-    name: localStorage.user.name,
-    fb_id: localStorage.user.fb_id,
-    email: localStorage.user.email
-  };
-  res.send(userInfo);
+  db.getAllFriends([localStorage.user.email], (err, result) => {
+    if (err) {
+      res.status(500).send(err);
+    } else {
+
+      let userInfo = {
+        isAuthenitcated: localStorage.isAuthenitcated,
+        name: localStorage.user.name,
+        fb_id: localStorage.user.fb_id,
+        email: localStorage.user.email,
+        friendsList: result
+      };
+      res.send(userInfo);
+      // res.status(200).send(result);
+    }
+  });
+  // let userInfo = {
+  //   isAuthenitcated: localStorage.isAuthenitcated,
+  //   name: localStorage.user.name,
+  //   fb_id: localStorage.user.fb_id,
+  //   email: localStorage.user.email
+  // };
+  // res.send(userInfo);
 });
 
 app.get('*', checkAuthentication, authHelper, (req, res) => {
@@ -274,7 +290,7 @@ app.post('/vision', function(req, res) {
 });
 
 app.post('/addfriend', (req, res) => {
-  console.log('req body', req.body);
+  // console.log('req body', req.body);
   db.addFriend([req.body.email, req.body.friendEmail], (err, result) => {
     if (err) {
       res.status(500).send(err);
