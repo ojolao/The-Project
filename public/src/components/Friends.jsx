@@ -36,7 +36,7 @@ class Friends extends React.Component {
           <br></br>
           <br></br>
         </div>
-        {friends.map(friend => <FriendEntry friend={friend}/>)}
+        {this.props.friendsList.map(friend => <FriendEntry friend={friend}/>)}
       </div>
     )
   }

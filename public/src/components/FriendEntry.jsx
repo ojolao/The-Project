@@ -6,7 +6,7 @@ const FriendEntry = (props) => (
 
       className='flex-column-receiptItem'
     >
-      {props.friend}
+      {props.friend.name}
     </div>
     <div className='flex-container'>
       <a

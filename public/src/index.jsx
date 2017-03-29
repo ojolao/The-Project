@@ -49,7 +49,8 @@ class App extends React.Component {
       windowHeight: '',
       recent: [ {name: 'No trips yet. Now create one!'}],
       friendEmail: '',
-      addFriendStatus: ''
+      addFriendStatus: '',
+      friendsList: []
     };
 
     this.verifyAuthentication = this.verifyAuthentication.bind(this);
@@ -106,7 +107,8 @@ class App extends React.Component {
       username: userInfo.name || '',
       members: userInfo.name !== undefined ? this.state.members.concat([[userInfo.name]]) : this.state.members,
       fb_id: userInfo.fb_id || '',
-      email: userInfo.email || ''
+      email: userInfo.email || '',
+      friendsList: userInfo.friendsList || []
     });
   }
 
@@ -415,6 +417,7 @@ class App extends React.Component {
               addFriendChange={this.handleAddFriendChange}
               addFriend={this.handleAddFriend}
               addFriendStatus={this.state.addFriendStatus}
+              friendsList={this.state.friendsList}
             />
             <Route path ="/login" render={() => (
               this.state.isAuthenticated ? <Redirect to="/" /> : <Login />
