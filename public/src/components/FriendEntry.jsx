@@ -6,7 +6,7 @@ class FriendEntry extends React.Component {
     super(props);
   }
   handleOnClick() {
-    console.log('click');
+    // console.log('click');
     this.props.removeFriend(this.props.friend.email);
   }
   render() {
