@@ -163,10 +163,12 @@ app.get('/logout', authHelper, function(req, res) {
 });
 
 app.get('/verify', authHelper, function(req, res) {
+  console.log('LOCAL STORAGE', localStorage);
   let userInfo = {
     isAuthenitcated: localStorage.isAuthenitcated,
     name: localStorage.user.name,
-    fb_id: localStorage.user.fb_id
+    fb_id: localStorage.user.fb_id,
+    email: localStorage.user.email
   };
   res.send(userInfo);
 });
