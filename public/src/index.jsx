@@ -87,12 +87,10 @@ class App extends React.Component {
         friendEmail: email
       },
       success: function(result) {
-        // console.log(result);
         self.setState({friendsList: result, addFriendStatus: ''});
       },
       error: function(err) {
         console.log(err.responseText);
-        // self.setState({addFriendStatus: err.responseText});
       }
     });
   }
@@ -107,11 +105,9 @@ class App extends React.Component {
         friendEmail: this.state.friendEmail
       },
       success: function(result) {
-        // console.log(result);
         self.setState({addFriendStatus: result[0], friendsList: result[1]});
       },
       error: function(err) {
-        // console.log(err.responseText);
         self.setState({addFriendStatus: err.responseText});
       }
     });

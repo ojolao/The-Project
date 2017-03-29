@@ -168,7 +168,6 @@ app.get('/verify', authHelper, function(req, res) {
     if (err) {
       res.status(500).send(err);
     } else {
-
       let userInfo = {
         isAuthenitcated: localStorage.isAuthenitcated,
         name: localStorage.user.name,
@@ -177,16 +176,8 @@ app.get('/verify', authHelper, function(req, res) {
         friendsList: result
       };
       res.send(userInfo);
-      // res.status(200).send(result);
     }
   });
-  // let userInfo = {
-  //   isAuthenitcated: localStorage.isAuthenitcated,
-  //   name: localStorage.user.name,
-  //   fb_id: localStorage.user.fb_id,
-  //   email: localStorage.user.email
-  // };
-  // res.send(userInfo);
 });
 
 app.get('*', checkAuthentication, authHelper, (req, res) => {
@@ -265,14 +256,6 @@ app.post('/recent', (req, res) => {
   });
 });
 
-// app.get('/recent-trips', (req, res) => {
-//   console.log('req.body==============', req.body);
-//   db.getReceiptsAndTrips({adminName: req.body.username, tripName: req.body.tripName})
-//   .then( (results) => {
-//     res.send(results);
-//   });
-// });
-
 //gVision.spliceReceipt produces an object of item : price pairs
 app.post('/vision', function(req, res) {
   let testNumber = 4;
@@ -290,31 +273,17 @@ app.post('/vision', function(req, res) {
 });
 
 app.post('/addfriend', (req, res) => {
-  // console.log('req body', req.body);
   db.addFriend([req.body.email, req.body.friendEmail], (errAdd, resultAdd) => {
     if (errAdd) {
       res.status(500).send(errAdd);
     } else {
-
       db.getAllFriends([localStorage.user.email], (errFetch, resultFetch) => {
         if (errFetch) {
           res.status(500).send(errFetch);
         } else {
-
-          // let userInfo = {
-          //   isAuthenitcated: localStorage.isAuthenitcated,
-          //   name: localStorage.user.name,
-          //   fb_id: localStorage.user.fb_id,
-          //   email: localStorage.user.email,
-          //   friendsList: result
-          // };
           res.send([resultAdd, resultFetch]);
-          // res.status(200).send(result);
         }
       });
-
-
-      // res.status(201).send(resultAdd);
     }
   });
 });
@@ -324,7 +293,6 @@ app.post('/removefriend', (req, res) => {
     if (errRemove) {
       res.status(500).send(errRemove);
     } else {
-
       db.getAllFriends([localStorage.user.email], (errFetch, resultFetch) => {
         if (errFetch) {
           res.status(500).send(errFetch);

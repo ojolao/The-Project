@@ -79,10 +79,10 @@ const queryString = {
 const removeFriend = (params, cb) => {
   db.query(queryString.removeFriend, params, (err, result) => {
     if (err) {
-      console.log('Error removing friends...');
+      // console.log('Error removing friends...');
       cb(err, null);
     } else {
-      console.log('Success removing friends!');
+      // console.log('Success removing friends!');
       cb(null, result);
     }
   });
@@ -91,10 +91,10 @@ const removeFriend = (params, cb) => {
 const getAllFriends = (params, cb) => {
   db.query(queryString.getAllFriends, params, (err, result) => {
     if (err) {
-      console.log('Error getting all friends...');
+      // console.log('Error getting all friends...');
       cb(err, null);
     } else {
-      console.log('Success getting all friends!');
+      // console.log('Success getting all friends!');
       cb(null, result);
     }
   });
@@ -103,34 +103,23 @@ const getAllFriends = (params, cb) => {
 const addFriend = (params, cb) => {
   db.query(queryString.findFriend, params, (err, result) => {
     if (err) {
-      console.log('ERROR IN FIND FRIEND');
+      // console.log('ERROR IN FIND FRIEND');
       cb('There seems to be an error. Try again later.', null);
     } else if (result.length < 1) {
       db.query(queryString.addFriend, params, (err) => {
         if (err) {
-          console.log('ERROR IN ADD FRIEND')
+          // console.log('ERROR IN ADD FRIEND')
           cb('Sorry we could not find your friend...', null)
         } else {
-          console.log('success!! add friend');
+          // console.log('success!! add friend');
           cb(null, 'Successfully added friend!');
         }
       });
     } else {
-      console.log('DUPLICATE FRIEND');
+      // console.log('DUPLICATE FRIEND');
       cb(null, 'You are already friends with this user!')
     }
   });
-
-
-  // return db.queryAsync(queryString.addFriend, params)
-  // .then((result) => {
-  //   console.log('Success adding friend!')
-  //   cb(null, result);
-  // })
-  // .catch((err) => {
-  //   console.error('Error adding friend...');
-  //   cb(err, null);
-  // });
 };
 
 const createNewUser = (userInfo) => {
