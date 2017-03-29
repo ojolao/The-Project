@@ -87,7 +87,7 @@ class App extends React.Component {
       },
       success: function(result) {
         console.log(result);
-        self.setState({addFriendStatus: result});
+        self.setState({addFriendStatus: result[0], friendsList: result[1]});
       },
       error: function(err) {
         console.log(err.responseText);

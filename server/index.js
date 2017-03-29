@@ -291,11 +291,30 @@ app.post('/vision', function(req, res) {
 
 app.post('/addfriend', (req, res) => {
   // console.log('req body', req.body);
-  db.addFriend([req.body.email, req.body.friendEmail], (err, result) => {
-    if (err) {
-      res.status(500).send(err);
+  db.addFriend([req.body.email, req.body.friendEmail], (errAdd, resultAdd) => {
+    if (errAdd) {
+      res.status(500).send(errAdd);
     } else {
-      res.status(201).send(result);
+
+      db.getAllFriends([localStorage.user.email], (errFetch, resultFetch) => {
+        if (errFetch) {
+          res.status(500).send(errFetch);
+        } else {
+
+          // let userInfo = {
+          //   isAuthenitcated: localStorage.isAuthenitcated,
+          //   name: localStorage.user.name,
+          //   fb_id: localStorage.user.fb_id,
+          //   email: localStorage.user.email,
+          //   friendsList: result
+          // };
+          res.send([resultAdd, resultFetch]);
+          // res.status(200).send(result);
+        }
+      });
+
+
+      // res.status(201).send(resultAdd);
     }
   });
 });
