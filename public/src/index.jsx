@@ -48,7 +48,8 @@ class App extends React.Component {
       sideMenuState: false,
       windowHeight: '',
       recent: [ {name: 'No trips yet. Now create one!'}],
-      friendEmail: ''
+      friendEmail: '',
+      addFriendStatus: ''
     };
 
     this.verifyAuthentication = this.verifyAuthentication.bind(this);
@@ -71,11 +72,31 @@ class App extends React.Component {
     this.updateDimensions = this.updateDimensions.bind(this);
     this.getRecentTrip = this.getRecentTrip.bind(this);
     this.handleAddFriendChange = this.handleAddFriendChange.bind(this);
+    this.handleAddFriend = this.handleAddFriend.bind(this);
+  }
+
+  handleAddFriend() {
+    var self = this;
+    $.ajax({
+      url: '/addfriend',
+      type: 'POST',
+      data: {
+        email: this.state.email,
+        friendEmail: this.state.friendEmail
+      },
+      success: function(result) {
+        console.log(result);
+        self.setState({addFriendStatus: result});
+      },
+      error: function(err) {
+        console.log(err.responseText);
+        self.setState({addFriendStatus: err.responseText});
+      }
+    });
   }
 
   handleAddFriendChange(e) {
     this.setState({friendEmail: e.target.value});
-    console.log(this.state.friendEmail);
   }
 
   verifyAuthentication(userInfo) {
@@ -392,6 +413,8 @@ class App extends React.Component {
               data={this.state}
               recent={this.getRecentTrip}
               addFriendChange={this.handleAddFriendChange}
+              addFriend={this.handleAddFriend}
+              addFriendStatus={this.state.addFriendStatus}
             />
             <Route path ="/login" render={() => (
               this.state.isAuthenticated ? <Redirect to="/" /> : <Login />
