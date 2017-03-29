@@ -47,7 +47,8 @@ class App extends React.Component {
       amount: '',
       sideMenuState: false,
       windowHeight: '',
-      recent: [ {name: 'No trips yet. Now create one!'}]
+      recent: [ {name: 'No trips yet. Now create one!'}],
+      friendEmail: ''
     };
 
     this.verifyAuthentication = this.verifyAuthentication.bind(this);
@@ -69,6 +70,11 @@ class App extends React.Component {
     this.calculateTotal = this.calculateTotal.bind(this);
     this.updateDimensions = this.updateDimensions.bind(this);
     this.getRecentTrip = this.getRecentTrip.bind(this);
+    this.handleAddFriend = this.handleAddFriend.bind(this);
+  }
+
+  handleAddFriend(e) {
+    this.setState({friendEmail: e.target.value});
   }
 
   verifyAuthentication(userInfo) {
