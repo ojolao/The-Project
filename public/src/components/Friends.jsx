@@ -10,7 +10,7 @@ class Friends extends React.Component {
 
   render() {
     let friends = ['Kai', 'Tayo', 'Duy', 'Gary', 'Whitney', 'Eugene']
-    console.log('props', this.props);
+    // console.log('props', this.props);
     return(
       <div>
         <div>
@@ -23,13 +23,15 @@ class Friends extends React.Component {
             className='flex-column-name'
           />
           <a
-            className='btn-circle'>
+            className='btn-circle'
+            onClick={this.props.addFriend}
+          >
           </a>
 
         </div>
         <div>
           <br></br>
-          Sorry we could not find your friend...
+          {this.props.addFriendStatus}
           <br></br>
           <br></br>
           <br></br>
