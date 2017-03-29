@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter as Router, Route, Link, Redirect} from 'react-router-dom';
 import TripSummary from './components/TripSummary.jsx';
+import Friends from './components/Friends.jsx';
 import CreateTrip from './components/CreateTrip.jsx';
 import Itemization from './components/Itemization.jsx';
 import UploadReceipt from './components/Upload.jsx';
@@ -189,7 +190,7 @@ class App extends React.Component {
       }
       if (item[0].name !== '<NOTE>') {
         sum += Number(item[0].amount);
-      } 
+      }
     });
     this.setState({
       sumBill: sum.toFixed(2)
@@ -368,6 +369,13 @@ class App extends React.Component {
               path ="/recent-trips"
               isAuthenticated={this.state.isAuthenticated}
               component={TripSummary}
+              data={this.state}
+              recent={this.getRecentTrip}
+            />
+            <PrivateRoute
+              path ="/friends"
+              isAuthenticated={this.state.isAuthenticated}
+              component={Friends}
               data={this.state}
               recent={this.getRecentTrip}
             />
