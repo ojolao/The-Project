@@ -302,7 +302,9 @@ class App extends React.Component {
               isAuthenticated={this.state.isAuthenticated}
               handleClickLogout={this.handleClickLogout}
               menuOnClick={this.menuOnClick}
-              sideMenuState={this.state.sideMenuState}/>
+              sideMenuState={this.state.sideMenuState}
+              recent={this.getRecentTrip}
+            />
           <div className='content-container'>
             <PrivateRouteHome path="/" isAuthenticated={this.state.isAuthenticated}
               data={this.state}
