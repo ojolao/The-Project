@@ -76,6 +76,20 @@ class App extends React.Component {
     this.handleAddFriend = this.handleAddFriend.bind(this);
     this.handleRemoveFriend = this.handleRemoveFriend.bind(this);
     this.sendMessage = this.sendMessage.bind(this);
+    this.handleSetSummary = this.handleSetSummary.bind(this);
+  }
+
+  handleSetSummary() {
+    this.setState({
+      sumBill: '88.00',
+      sumTax: '',
+      sumTip: 0,
+      sumTotal: 95.92,
+      members: ['Brandon', 'Kai'],
+      tripName: 'testing',
+      username: 'Brandon Wong',
+      items: [[{amount: "88.00", members: ["Brandon Wong"], name: "Pasta"}]]
+    });
   }
 
   handleRemoveFriend(email) {
@@ -437,6 +451,7 @@ class App extends React.Component {
               component={TripSummary}
               data={this.state}
               recent={this.getRecentTrip}
+              setSummary={this.handleSetSummary}
             />
             <PrivateRoute
               path ="/friends"
