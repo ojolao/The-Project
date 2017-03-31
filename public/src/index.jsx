@@ -75,6 +75,7 @@ class App extends React.Component {
     this.handleAddFriendChange = this.handleAddFriendChange.bind(this);
     this.handleAddFriend = this.handleAddFriend.bind(this);
     this.handleRemoveFriend = this.handleRemoveFriend.bind(this);
+    this.sendMessage = this.sendMessage.bind(this);
   }
 
   handleRemoveFriend(email) {
@@ -342,6 +343,17 @@ class App extends React.Component {
     });
   }
 
+  sendMessage(e, data, cb) {
+    e.preventDefault();
+    console.log('send message clicked with these parameters -->', data);
+    $.ajax({
+      type: 'POST',
+      url: '/submit/email',
+      data: data,
+      success: cb
+    });
+  }
+
   render() {
     return (
       <div className='site-container'>
@@ -417,6 +429,7 @@ class App extends React.Component {
               component={Breakdown}
               data={this.state}
               recent={this.getRecentTrip}
+              sendMessage={this.sendMessage}
             />
             <PrivateRoute
               path ="/recent-trips"
