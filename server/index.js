@@ -304,6 +304,11 @@ app.post('/removefriend', (req, res) => {
   });
 });
 
+app.post('/submit/email', (req, res) => {
+  console.log(req.body);
+  res.send({status: 'ok'});
+});
+
 const port = process.env.PORT || 5000;
 app.listen(port, function() {
   console.log(`Listening on ${port}`);
