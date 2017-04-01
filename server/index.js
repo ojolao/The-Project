@@ -8,6 +8,8 @@ const passport = require('passport');
 const FacebookStrategy = require('passport-facebook').Strategy;
 const KEYS = process.env.fbKey;
 const fileUpload = require('express-fileupload');
+const config = require('./config/config');
+
 const app = express();
 const cloudinary = require('cloudinary');
 cloudinary.config({
@@ -22,6 +24,8 @@ const fs = Promise.promisifyAll(require('fs'));
 //Google cloud vision setup:
 const gVision = require('./api/vision.js');
 var localStorage = {};
+
+const Mailgun = require('mailgun-js');
 
 app.use( bodyParser.json() );
 app.use(cors());
@@ -40,13 +44,14 @@ if (process.env.NODE_ENV === 'production') {
     saveUninitialized: true
   }));
 } else {
-  const config = require('./config/config');
   app.use(require('express-session')({
     secret: config.SESSION_SECRET,
     resave: true,
     saveUninitialized: true
   }));
 }
+
+
 
 // Initialize Passport and restore authentication state, if any, from the
 // session.
@@ -302,6 +307,27 @@ app.post('/removefriend', (req, res) => {
       });
     }
   });
+});
+
+app.post('/submit/email', (req, res) => {
+  const mailgun = new Mailgun({apiKey: config.mailgunApiKey, domain: config.mailgunDomain});
+  const data = {
+    from: req.body.senderEmail,
+    to: req.body.recipientEmail,
+    subject: req.body.subject,
+    text: req.body.message
+  };
+  console.log(data);
+  mailgun.messages().send(data, function (err, body) {
+    if (err) {
+      res.render ('error', { error: err });
+      console.log('got an error from mailgun API -------->', err);
+    } else {
+      console.log(body);
+      res.send({status: 'ok'});
+    }
+  });
+
 });
 
 const port = process.env.PORT || 5000;
