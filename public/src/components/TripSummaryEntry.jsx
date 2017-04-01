@@ -20,9 +20,9 @@ class TripSummaryEntry extends React.Component {
   }
   render() {
     return (
-      <div>
+      <p>
         <Link to="/summary" onClick={this.handleOnClick.bind(this)} className='trip-summary'>{this.props.item.name}</Link>
-      </div>
+      </p>
     );
   }
 }
