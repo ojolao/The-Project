@@ -291,7 +291,7 @@ const createMemberSummary = (params) => {
 }
 
 
-const getReceiptsAndTrips = (params) => {
+const getReceiptsAndTrips = (params, cb) => {
   let database = mysqlConfig.database;
   if (database = 'gewd') {
     database = '';
@@ -299,8 +299,8 @@ const getReceiptsAndTrips = (params) => {
     database = 'heroku_a258462d4ded143' + '.';
   }
 
-  const queryStringGetAllTripsFromAdminName = `SELECT trips.name FROM ` + database + `trips WHERE trips.adminID = (SELECT members.id FROM ` + database + `members WHERE members.name = ?);`
-  const queryStringGetTripIDFromTripName = `SELECT trips.id from ` + database + `trips WHERE trips.name = ?;`
+  // const queryStringGetAllTripsFromAdminName = `SELECT trips.name FROM ` + database + `trips WHERE trips.adminID = (SELECT members.id FROM ` + database + `members WHERE members.name = ?);`
+  // const queryStringGetTripIDFromTripName = `SELECT trips.id from ` + database + `trips WHERE trips.name = ?;`
   // const queryStringGetMemberIDFromTripID = `SELECT trips_members.memberID from heroku_a258462d4ded143.trips_members WHERE trips_members.tripID = ?;`
   // const queryStringGetMemberNameFromMemberID = `SELECT members.name FROM heroku_a258462d4ded143.members WHERE members.id = ?;`
 
@@ -310,19 +310,111 @@ const getReceiptsAndTrips = (params) => {
   // const queryStringGetSumTaxFromReceiptName = `SELECT receipts.sum_tax FROM receipts WHERE receipts.name = ?;`
   // const queryStringGetSumTipFromReceiptName = `SELECT receipts.sum_tip FROM receipts WHERE receipts.name = ?;`
 
-  let adminName = params.adminName;
-  let tripName = params.tripName;
+  // const queryMembersFromTripsName = select * from trips_members, members where trips_members.tripID = (select id from trips where trips.name = '?') and memberID=members.id;
 
-  return db.queryAsync(queryStringGetAllTripsFromAdminName, adminName)
-    .then( tripsArray => tripsArray )
-    // .then( tripsArray => {
-    //   return Promise.map( tripsArray, trip => {
-    //     return db.queryAsync(queryStringGetTripIDFromTripName, trip.name)
-    //       .then( tripID => tripID )
-    //   })
-    // })
-    .catch( err => console.log('ERROR: getAllTripsFromAdminName', err ));
-}
+  // const queryStringGetAdminIdByEmail = 'select id from users where email = ?';
+  // let adminName = params.adminName;
+  // let tripName = params.tripName;
+  // const queryStringGetReceiptInfoFromAdminName = 'select trips.name, receipts.sum_bill, receipts.sum_tax, receipts.sum_tip from trips, receipts where trips.adminID = (select members.id from members where members.email = ?) and trips.id = receipts.tripID';
+  const queryStringGetTripsSummary = 'select receipts.id, trips.id, trips.name, receipts.sum_bill, receipts.sum_tax, receipts.sum_tip, GROUP_CONCAT(distinct members.name), items.receiptID, group_concat(items.name), group_concat(items.raw_price), group_concat(members.name) from trips, receipts, trips_members, items, consumed_items, members where (select id from members where members.email=?) and (receipts.tripID = trips.id) and trips_members.tripID = trips.id and items.id=consumed_items.itemID and receipts.id=items.receiptID and members.id=consumed_items.payeeID group by receipts.id, items.receiptID;'
+  // db.query(queryStringGetReceiptInfoFromAdminName, params, (err, result) => {
+  //   if (err) {
+  //     cb(err, null);
+  //   } else {
+  //     console.log(result);
+  //     db.query(queryStringTest, params, (err, result) => {
+  //       console.log('TEST', result);
+
+  //     });
+  //     cb(null, result);
+
+  //   }
+  // });
+  db.query(queryStringGetTripsSummary, params, (err, result) => {
+    if (err) {
+      cb(err, null);
+    } else {
+      // "7,1,2"
+      // group_concat(items.name)
+      // :
+      // "1 Chicken Wings,2 Uni pasta,1 Truffle Fries,1 Chicken Wings,2 Uni pasta,2 Uni pasta,2 Uni pasta,1 Chicken Wings,1 HH- Saporo,1 Chicken Wings,2 Uni pasta,2 Uni pasta,20 HH OYSTER,1 Chicken Wings,1 HH- Saporo,1 Chicken Wings,2 Uni pasta,20 HH OYSTER,20 HH OYSTER,1 Chicken Wings,1 Chicken Wings,1 HH- Saporo,1 HH-Goose Island,20 HH OYSTER,1 Chicken Wings,20 HH OYSTER,1 Truffle Fries,1 HH- Saporo,1 HH-Goose Island,20 HH OYSTER,2 Uni pasta,20 HH OYSTER,1 HH- Saporo,1 Truffle Fries,1 HH-Goose Island,2 Uni pasta,20 HH OYSTER,20 HH OYSTER,2 Uni pasta,1 Truffle Fries,2 Uni pasta,1 HH-Goose Island,20 HH OYSTER,2 Uni pasta,2 Uni pasta,1 Chicken Wings,1 Truffle Fries,1 HH-Goose Island,2 Uni pasta,2 Uni pasta"
+      // group_concat(items.raw_price)
+      // :
+      // "10,42,6,10,42,42,42,10,5,10,42,42,20,10,5,10,42,20,20,10,10,5,5,20,10,20,6,5,5,20,42,20,5,6,5,42,20,20,42,6,42,5,20,42,42,10,6,5,42,42"
+      // group_concat(members.name)
+      // :
+      // "Brandon Wong,Tayo,Kai,Tayo,Brandon Wong,Kai,Tayo,Brandon Wong,Brandon Wong,Tayo,Brandon Wong,Kai,Tayo,Brandon Wong,Brandon Wong,Tayo,Brandon Wong,Kai,Tayo,Brandon Wong,Tayo,Brandon Wong,Kai,Kai,Brandon Wong,Tayo,Kai,Brandon Wong,Kai,Kai,Tayo,Tayo,Brandon Wong,Kai,Kai,Kai,Kai,Tayo,Tayo,Kai,Brandon Wong,Kai,Kai,Kai,Tayo,Tayo,Kai,Kai,Brandon Wong,Kai"
+      var summaryPacket = [];
+      // console.log(result);
+      // console.log(result[0] ? result[0]['group_concat(items.name)'].split(',').length : null);
+      // console.log(result[0] ? result[0]['group_concat(items.raw_price)'].split(',').length : null);
+      // console.log(result[0] ? result[0]['group_concat(members.name)'].split(',').length : null);
+      if (result[0]) {
+        for (let summary = 0; summary < result.length; summary++) {
+          // console.log('SUMMARY', summary);
+          var packet = {
+            'name': result[summary]['name'],
+            'sumBill': result[summary]['sum_bill'],
+            'sumTax': result[summary]['sum_tax'],
+            'sumTip': result[summary]['sum_tip'],
+            'members': result[summary]['GROUP_CONCAT(distinct members.name)'].split(',')
+          };
+          let items = [];
+          let local = {};
+          const itemNames = result[summary]['group_concat(items.name)'].split(',');
+          const itemPrices = result[summary]['group_concat(items.raw_price)'].split(',');
+          const itemMembers = result[summary]['group_concat(members.name)'].split(',');
+          for (let item = 0; item < itemNames.length; item++) {
+            if (!local[itemNames[item]]) {
+              local[itemNames[item]] = {'found': true};
+              local[itemNames[item]] = {
+                'package': {
+                  'name': itemNames[item]
+                }
+              };
+              // local[itemNames[item]]['package']['amount'] = itemPrices[item];
+              local[itemNames[item]]['package']['amount'] = itemPrices[item];
+              // console.log('MEMBER LIST ---------', local[itemNames[item]]['members']);
+            }
+            if (!local[itemNames[item]]['members']) {
+              // local[itemNames[item]]['member'][itemMembers[item]] = true;
+              local[itemNames[item]]['members'] = {};
+              local[itemNames[item]]['members'][itemMembers[item]] = true;
+
+              local[itemNames[item]]['package']['members'] = [itemMembers[item]];
+            } else if (!local[itemNames[item]]['members'][itemMembers[item]]) {
+              // console.log('PUSHING MEMBER ================', itemMembers[item]);
+              local[itemNames[item]]['members'][itemMembers[item]] = true;
+              local[itemNames[item]]['package']['members'].push(itemMembers[item]);
+            }
+          }
+          // console.log('LOCAL STORAGE', local);
+          for (var element in local) {
+            items.push([local[element]['package']]);
+          }
+          // console.log('ITEMS', items);
+          packet['items'] = items;
+          summaryPacket.push(packet);
+          // summaryPacket[summary]['name'] = result[summary]['name'];
+        }
+        cb(null, summaryPacket);
+
+      }
+    }
+  });
+
+
+
+  // return db.queryAsync(queryStringGetAllTripsFromAdminName, adminName)
+  //   .then( tripsArray => tripsArray )
+  //   // .then( tripsArray => {
+  //   //   return Promise.map( tripsArray, trip => {
+  //   //     return db.queryAsync(queryStringGetTripIDFromTripName, trip.name)
+  //   //       .then( tripID => tripID )
+  //   //   })
+  //   // })
+  //   .catch( err => console.log('ERROR: getAllTripsFromAdminName', err ));
+};
 
 module.exports = {
   createNewUser,

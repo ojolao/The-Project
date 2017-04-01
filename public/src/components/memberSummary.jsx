@@ -20,10 +20,13 @@ class MemberSummary extends React.Component {
     // event.preventDefault();
     // this.setState({dummyData});
     Util.insertIntoDb(this.props.data);
+    // Util.sendServerTripName(this.props.data.tripName, this.props.data.tripDesc );
     this.props.calculateMemberSum();
   }
 
   render() {
+    // console.log('MEMBER SUMMARY STATE', this.props);
+    // console.log('ITEMS', JSON.stringify(this.props.data.items));
     return (
       <div className='member-summary-page'>
         <Link to='/additems' className='back-history'>Receipt Items</Link>

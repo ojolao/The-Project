@@ -76,6 +76,11 @@ class App extends React.Component {
     this.handleAddFriend = this.handleAddFriend.bind(this);
     this.handleRemoveFriend = this.handleRemoveFriend.bind(this);
     this.sendMessage = this.sendMessage.bind(this);
+    this.handleSetSummary = this.handleSetSummary.bind(this);
+  }
+
+  handleSetSummary(summary) {
+    this.setState(summary);
   }
 
   handleRemoveFriend(email) {
@@ -437,6 +442,7 @@ class App extends React.Component {
               component={TripSummary}
               data={this.state}
               recent={this.getRecentTrip}
+              setSummary={this.handleSetSummary}
             />
             <PrivateRoute
               path ="/friends"
