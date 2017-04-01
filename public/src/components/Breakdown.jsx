@@ -75,7 +75,7 @@ class Breakdown extends React.Component {
                           <div style={{textAlign: 'right'}}>
                             <a href='#close' title='Close' className='close'><b>X</b></a>
                           </div> 
-                          <p>Complete the form below to send an email to {member}:</p> 
+                          <p>Complete the form below to send an email reminder about this bill:</p> 
                           <form id='modalFeedback' onSubmit={(e) => { this.props.sendMessage(e, this.state, () => { this.setState({recipientEmail: '', subject: '', message: ''}); window.location.assign('#close'); }); } }> 
                            <p><label>Your Name<strong>*</strong><br></br>
                             <input type='text' autoFocus required size='48' name='name' defaultValue={this.state.senderName}></input>
@@ -83,7 +83,7 @@ class Breakdown extends React.Component {
                           <p><label>Your Email Address<strong>*</strong><br></br>
                             <input type="email" required title="Please enter a valid email address" size="48" name='email' value={this.state.senderEmail} onChange={this.senderEmailChange.bind(this)}></input>
                           </label></p> 
-                          <p><label>{member}'s Email Address<strong>*</strong><br></br>
+                          <p><label>Recipient's Email Address<strong>*</strong><br></br>
                           <input type="email" required title="Please enter a valid email address" size="48" name='email' value={this.state.recipientEmail} onChange={this.recipientEmailChange.bind(this)}></input>
                           </label></p> 
                           <p><label>Subject<br></br>
