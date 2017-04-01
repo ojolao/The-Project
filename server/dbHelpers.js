@@ -315,7 +315,7 @@ const getReceiptsAndTrips = (params, cb) => {
   // const queryStringGetAdminIdByEmail = 'select id from users where email = ?';
   // let adminName = params.adminName;
   // let tripName = params.tripName;
-  const queryStringGetReceiptInfoFromAdminName = 'select trips.name, receipts.sum_bill, receipts.sum_tax, receipts.sum_tip from trips, receipts where trips.adminID = (select members.id from members where members.email = ?) and trips.id = receipts.tripID';
+  // const queryStringGetReceiptInfoFromAdminName = 'select trips.name, receipts.sum_bill, receipts.sum_tax, receipts.sum_tip from trips, receipts where trips.adminID = (select members.id from members where members.email = ?) and trips.id = receipts.tripID';
   const queryStringGetTripsSummary = 'select receipts.id, trips.id, trips.name, receipts.sum_bill, receipts.sum_tax, receipts.sum_tip, GROUP_CONCAT(distinct members.name), items.receiptID, group_concat(items.name), group_concat(items.raw_price), group_concat(members.name) from trips, receipts, trips_members, items, consumed_items, members where (select id from members where members.email=?) and (receipts.tripID = trips.id) and trips_members.tripID = trips.id and items.id=consumed_items.itemID and receipts.id=items.receiptID and members.id=consumed_items.payeeID group by receipts.id, items.receiptID;'
   // db.query(queryStringGetReceiptInfoFromAdminName, params, (err, result) => {
   //   if (err) {
@@ -345,13 +345,13 @@ const getReceiptsAndTrips = (params, cb) => {
       // :
       // "Brandon Wong,Tayo,Kai,Tayo,Brandon Wong,Kai,Tayo,Brandon Wong,Brandon Wong,Tayo,Brandon Wong,Kai,Tayo,Brandon Wong,Brandon Wong,Tayo,Brandon Wong,Kai,Tayo,Brandon Wong,Tayo,Brandon Wong,Kai,Kai,Brandon Wong,Tayo,Kai,Brandon Wong,Kai,Kai,Tayo,Tayo,Brandon Wong,Kai,Kai,Kai,Kai,Tayo,Tayo,Kai,Brandon Wong,Kai,Kai,Kai,Tayo,Tayo,Kai,Kai,Brandon Wong,Kai"
       var summaryPacket = [];
-      console.log(result);
-      console.log(result[0] ? result[0]['group_concat(items.name)'].split(',').length : null);
-      console.log(result[0] ? result[0]['group_concat(items.raw_price)'].split(',').length : null);
-      console.log(result[0] ? result[0]['group_concat(members.name)'].split(',').length : null);
+      // console.log(result);
+      // console.log(result[0] ? result[0]['group_concat(items.name)'].split(',').length : null);
+      // console.log(result[0] ? result[0]['group_concat(items.raw_price)'].split(',').length : null);
+      // console.log(result[0] ? result[0]['group_concat(members.name)'].split(',').length : null);
       if (result[0]) {
         for (let summary = 0; summary < result.length; summary++) {
-          console.log('SUMMARY', summary);
+          // console.log('SUMMARY', summary);
           var packet = {
             'name': result[summary]['name'],
             'sumBill': result[summary]['sum_bill'],
@@ -374,7 +374,7 @@ const getReceiptsAndTrips = (params, cb) => {
               };
               // local[itemNames[item]]['package']['amount'] = itemPrices[item];
               local[itemNames[item]]['package']['amount'] = itemPrices[item];
-              console.log('MEMBER LIST ---------', local[itemNames[item]]['members']);
+              // console.log('MEMBER LIST ---------', local[itemNames[item]]['members']);
             }
             if (!local[itemNames[item]]['members']) {
               // local[itemNames[item]]['member'][itemMembers[item]] = true;
@@ -383,16 +383,16 @@ const getReceiptsAndTrips = (params, cb) => {
 
               local[itemNames[item]]['package']['members'] = [itemMembers[item]];
             } else if (!local[itemNames[item]]['members'][itemMembers[item]]) {
-              console.log('PUSHING MEMBER ================', itemMembers[item]);
+              // console.log('PUSHING MEMBER ================', itemMembers[item]);
               local[itemNames[item]]['members'][itemMembers[item]] = true;
               local[itemNames[item]]['package']['members'].push(itemMembers[item]);
             }
           }
-          console.log('LOCAL STORAGE', local);
+          // console.log('LOCAL STORAGE', local);
           for (var element in local) {
             items.push([local[element]['package']]);
           }
-          console.log('ITEMS', items);
+          // console.log('ITEMS', items);
           packet['items'] = items;
           summaryPacket.push(packet);
           // summaryPacket[summary]['name'] = result[summary]['name'];

@@ -5,9 +5,7 @@ class TripSummaryEntry extends React.Component {
   constructor(props) {
     super(props);
   }
-      // <p onClick={this.props.setSummary}>{this.props.item.name}</p>
   handleOnClick() {
-    // debugger;
     var summary = {
       sumBill: this.props.item.sumBill,
       sumTax: this.props.item.sumTax,
